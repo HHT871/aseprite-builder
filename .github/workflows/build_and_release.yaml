@@ -93,7 +93,9 @@ jobs:
             wget https://github.com/aseprite/skia/releases/download/m124-08a5439a6b/Skia-Linux-Release-x64.zip
             unzip Skia-Linux-Release-x64.zip -d skia
           fi
-      - uses: aseprite/get-ninja@main
+      - name: Install Ninja
+        shell: bash
+        run: choco install ninja -y --no-progress
       - uses: ilammy/msvc-dev-cmd@v1.13.0
         if: runner.os == 'Windows'
       - name: Generating Makefiles
