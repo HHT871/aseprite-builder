@@ -81,18 +81,17 @@ jobs:
       - name: Install Skia
         working-directory: aseprite
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          if [[ "${{ runner.os }}" == "Windows" ]] ; then
-            choco install wget -y --no-progress
-            wget https://github.com/aseprite/skia/releases/download/m124-08a5439a6b/Skia-Windows-Release-x64.zip
-            unzip Skia-Windows-Release-x64.zip -d skia
-          elif [[ "${{ runner.os }}" == "macOS" ]] ; then
-            wget https://github.com/aseprite/skia/releases/download/m124-08a5439a6b/Skia-macOS-Release-arm64.zip
-            unzip Skia-macOS-Release-arm64.zip -d skia
-          else
-            wget https://github.com/aseprite/skia/releases/download/m124-08a5439a6b/Skia-Linux-Release-x64.zip
-            unzip Skia-Linux-Release-x64.zip -d skia
-          fi
+          for i in 1 2 3 4 5; do
+            gh release download m124-08a5439a6b --repo aseprite/skia --pattern "Skia-Windows-Release-x64.zip" --dir . --clobber && break
+            echo "download retry $i"
+            sleep 5
+          done
+          test -f Skia-Windows-Release-x64.zip
+          unzip -q Skia-Windows-Release-x64.zip -d skia
+
       - name: Install Ninja
         shell: bash
         run: choco install ninja -y --no-progress
